@@ -1,2 +1,0 @@
-model_checkpoint_path: "false_jieba_train_vocab.ckpt"
-all_model_checkpoint_paths: "false_jieba_train_vocab.ckpt"
