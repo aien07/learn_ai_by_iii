@@ -1,0 +1,73 @@
+<%- include('parts/html-head.ejs') %>
+<%- include('parts/navbar') %>
+<div class="container">
+    <h2>語意分析</h2>
+    <form name="form1" method="POST" enctype="multipart/form-data">
+        <!-- <fieldset></fieldset>會自動幫你加一些CSS-->
+        <fieldset>
+            <input type="text" name="image" id="avatar">
+            <button id="analysis" type="button">分析</button>
+            <span>(請輸入有關訂高鐵票、點餐及客訴的話語)</span>
+        </fieldset>
+    </form>
+    <div>
+        <p>Result:</p>
+        <textarea name="" id="result" cols="100" rows="10"></textarea>
+    </div>
+</div>
+</body>
+<%- include('parts/scripts') %>
+<script>
+
+    $('#analysis').click(function () {
+        // console.log(event)
+        // const fd = new FormData(document.form1);
+        // console.log($('#avatar').val())
+        const url = `https://westus.api.cognitive.microsoft.com/luis/prediction/v3.0/apps/cb774bc9-8209-417e-85fe-cd10acd71120/slots/production/predict?subscription-key=a41e2a45a9ec4d5e8d900c53e1429dfa&verbose=true&show-all-intents=true&log=true&query=${$('#avatar').val()}`
+        // const url = "https://westus.api.cognitive.microsoft.com/luis/prediction/v3.0/apps/cb774bc9-8209-417e-85fe-cd10acd71120/slots/production/predict?subscription-key=a41e2a45a9ec4d5e8d900c53e1429dfa&verbose=true&show-all-intents=true&log=true&query="+$('#avatar').val()
+
+        // console.log(url)
+        // // console.log(fd)
+        $.ajax({
+            url: url,
+            beforeSend: function(xhrObj){
+                // Request headers
+                xhrObj.setRequestHeader("Ocp-Apim-Subscription-Key","a41e2a45a9ec4d5e8d900c53e1429dfa");
+            },
+            type: "GET",
+            // Request body
+            data: "{body}",
+        })
+        .done(function(data) {
+            var word = JSON.stringify(data, null, 2);
+            //JSON.stringify(value[, replacer[, space]])
+            //replacer只選擇想要的值
+            //space加空白或字串
+            //參考https://developer.mozilla.org/zh-TW/docs/Web/JavaScript/Reference/Global_Objects/JSON/stringify
+            $('#result').text(word);
+            // console.log(data);
+        })
+        .fail(function() {
+            alert("error");
+        });
+    })
+
+    // $('#analysis').click(function () {
+    //     var form_data = new FormData(document.form1);
+    //     console.log(document.form1)
+    //     $.ajax({
+    //         type: 'POST',
+    //         url: 'http://137.116.46.200/predict',
+    //         data: form_data,
+    //         contentType: false,
+    //         //cache: false,
+    //         processData: false,
+    //     }).done(function (result) {
+    //         console.log(result)
+    //     }).fail(function (err) {
+    //         alert(err.statusText);
+    //     });
+    // });
+
+</script>
+<%- include('parts/html-foot.ejs') %>

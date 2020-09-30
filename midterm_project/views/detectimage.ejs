@@ -1,0 +1,76 @@
+<%- include('parts/html-head.ejs') %>
+<%- include('parts/navbar') %>
+<div class="container">
+    <h2>Analysis Image</h2>
+    <form name="form1" method="POST" enctype="multipart/form-data">
+        <!-- <fieldset></fieldset>會自動幫你加一些CSS-->
+        <fieldset>
+            <input type="file" name="image" id="avatar">
+            <button id="analysis" type="button">分析</button>
+        </fieldset>
+    </form>
+    <div>
+        <div style="float: left; width: 400px;">
+            <p>your image:</p>
+            <img id="myimg" src="" alt="" width="400">
+        </div>
+        <div id="result" style="float: left; width: 400px;">
+            <p>result:</p>
+        </div>
+    </div>
+</div>
+</body>
+<%- include('parts/scripts') %>
+<script>
+    $('#avatar').change(function () {
+        var reader = new FileReader();
+        reader.readAsDataURL(this.files[0]); //開始讀取指定的 Blob，讀取完成後屬性 result 將以 data: URL 格式（base64 編碼）的字串來表示讀入的資料內容。
+        // console.log(this.files)
+        reader.onload = function (e) {
+            $('#myimg').attr('src', e.target.result);
+            // console.log(e)
+        } //事件處理器，於讀取完成時觸發。
+        // console.log(reader.result)
+    })
+
+    $('#analysis').click(function () {
+        // console.log(event)
+        const fd = new FormData(document.form1);
+        // console.log(document.form1)
+        // console.log(fd)
+        fetch('http://137.116.46.200/predict', {
+            method: 'POST',
+            body: fd
+        })
+            .then(res => res.json())
+            .then(function (obj) {
+                console.log(obj.predictions);
+                var str = "<p>result:</p>";
+                $.each(obj.predictions, function (index, predict) {
+                    str += "<p>" + index + ". " + predict.label + " : " + predict.probability + "</p>";
+                });
+                $("#result").html(str);
+            })
+            // .then(obj => $('#result p').html(obj.predictions))
+            .catch(error => alert('Error:', error))
+    })
+
+    // $('#analysis').click(function () {
+    //     var form_data = new FormData(document.form1);
+    //     console.log(document.form1)
+    //     $.ajax({
+    //         type: 'POST',
+    //         url: 'http://137.116.46.200/predict',
+    //         data: form_data,
+    //         contentType: false,
+    //         //cache: false,
+    //         processData: false,
+    //     }).done(function (result) {
+    //         console.log(result)
+    //     }).fail(function (err) {
+    //         alert(err.statusText);
+    //     });
+    // });
+
+</script>
+<%- include('parts/html-foot.ejs') %>

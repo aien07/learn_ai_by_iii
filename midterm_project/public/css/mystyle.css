@@ -1,0 +1,13 @@
+form {
+    border-width: 2px; 
+    border-style: groove; 
+    border-color: threedface; 
+    border-image: initial; 
+    padding: 10px;
+}
+
+#navbarSupportedContent .nav-item.active {
+    background-color: #6fccdb;
+    border-radius: 10px;
+}
+
